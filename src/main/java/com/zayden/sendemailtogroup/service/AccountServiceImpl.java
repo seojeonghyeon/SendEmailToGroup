@@ -2,8 +2,11 @@ package com.zayden.sendemailtogroup.service;
 
 import com.zayden.sendemailtogroup.dao.AccountRepository;
 import com.zayden.sendemailtogroup.domain.AccountEntity;
+import com.zayden.sendemailtogroup.dto.AccountDto;
 import com.zayden.sendemailtogroup.vo.SignUpForm;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -22,5 +25,12 @@ public class AccountServiceImpl implements AccountService {
                 .password(passwordEncoder.encode(signUpForm.getPassword()))
                 .build();
         accountRepository.save(accountEntity);
+    }
+
+    @Override
+    public AccountDto findByEmail(String email) {
+        ModelMapper modelMapper = new ModelMapper();
+        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+        return modelMapper.map(accountRepository.findByEmail(email), AccountDto.class);
     }
 }
